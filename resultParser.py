@@ -2,24 +2,61 @@ import os
 
 startSearchPath = "."
 storePath = "./mesure.txt"
+pattern = "MEAS.txt"
 
-print "Starting parsing Measure files from path: " + startSearchPath
+class FileSearch(object):
 
-for root, dirs, files in os.walk(startSearchPath):
-    #print files
-	for file in files:
-		#print file
-		if file.endswith("MEAS.txt"):
-			print "Found MEAS file: " + file
-			#print root
-			fileIn = os.path.join(root, file)
-			print fileIn
-			in_file = open(fileIn,"r")
-			#read only the first line
-			text = in_file.readline()
-			in_file.close()
-			print "Value from file: " + text
+    def __init__(self, filepath, pattern):
+        ''' We have to define some variable for computation '''
+        self.startSearchPath = filepath
+        self.pattern = pattern
+        self.fileList = []
 
-			out_file = open(storePath,"ab+")
-			out_file.write(text)
-			out_file.close()
+    def getFileList(self):
+        '''Get the list of Files that ends with defined pattern'''
+        for root, dirs, files in os.walk(self.startSearchPath):
+            #print files
+            for file in files:
+                #print file
+                if file.endswith(self.pattern):
+                    fileIn = os.path.join(root, file)
+                    print "Found file: " + fileIn
+                    self.fileList.append(fileIn)
+
+        return self.fileList
+
+    def printList(self):
+        ''' print array file'''
+        print self.fileList
+
+
+class storeResult(object):
+
+    def __init__(self, array):
+        self.fileList = array
+        self.fileAndResult = {}
+
+    def getResult(self):
+        for fileIn in self.fileList:
+            print fileIn
+            in_file = open(fileIn,"r")
+            #read only the first line (deleting new line)
+            measureResult = in_file.readline().rstrip()
+            print "Measure Result Value from file: %s is %s" % (fileIn , measureResult)
+            in_file.close()
+            self.fileAndResult[fileIn] = measureResult
+        return self.fileAndResult
+
+    def printResult(self):
+        print self.fileAndResult
+
+if __name__ == "__main__":
+    print "Starting parsing Measure files from path: " + startSearchPath
+    print "File Pattern: " + pattern
+    files = FileSearch(startSearchPath, pattern)
+    v = files.getFileList()
+    files.printList()
+
+    r = storeResult(v)
+    dic = r.getResult()
+    r.printResult()
