@@ -3,6 +3,8 @@ import os
 startSearchPath = "."
 storePath = "./mesure.txt"
 pattern = "MEAS.txt"
+filePrePattern = "V_TRD_8226_51_"
+filePostPattern = "MEAS.txt"
 
 class FileSearch(object):
 
@@ -22,7 +24,8 @@ class FileSearch(object):
                     fileIn = os.path.join(root, file)
                     print "Found file: " + fileIn
                     self.fileList.append(fileIn)
-
+        if not self.fileList:
+            raise Exception ("List is Empty")
         return self.fileList
 
     def printList(self):
@@ -39,12 +42,16 @@ class storeResult(object):
     def getResult(self):
         for fileIn in self.fileList:
             print fileIn
-            in_file = open(fileIn,"r")
-            #read only the first line (deleting new line)
-            measureResult = in_file.readline().rstrip()
-            print "Measure Result Value from file: %s is %s" % (fileIn , measureResult)
+            try:
+                in_file = open(fileIn,"r")
+            except:
+                raise Exception ("Unable to read file")
+            #read only the number of the first line (deleting new line)
+            measureResult = in_file.readline().split(" ")#
+            print "Measure Result Value from file: %s is %s" % (fileIn , measureResult[1].rstrip())
             in_file.close()
-            self.fileAndResult[fileIn] = measureResult
+            # Store only the num
+            self.fileAndResult[fileIn] = measureResult[1].rstrip()
         return self.fileAndResult
 
     def printResult(self):
