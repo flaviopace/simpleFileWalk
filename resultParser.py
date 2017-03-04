@@ -3,7 +3,7 @@ import os
 startSearchPath = "."
 storePath = "./mesure.txt"
 pattern = "MEAS.txt"
-filePrePattern = "V_TRD_8226_51_"
+filePrePattern = "PV_TRD_8226_51_"
 filePostPattern = "MEAS.txt"
 
 class FileSearch(object):
@@ -17,9 +17,9 @@ class FileSearch(object):
     def getFileList(self):
         '''Get the list of Files that ends with defined pattern'''
         for root, dirs, files in os.walk(self.startSearchPath):
-            #print files
+            # for each file found
             for file in files:
-                #print file
+                #select file that ends with desired pattern
                 if file.endswith(self.pattern):
                     fileIn = os.path.join(root, file)
                     print "Found file: " + fileIn
@@ -54,12 +54,24 @@ class storeResult(object):
             self.fileAndResult[fileIn] = measureResult[1].rstrip()
         return self.fileAndResult
 
+    def calcOutputName(self, prepattern, postpattern):
+        '''   '''
+        for key in self.fileAndResult.keys():
+            print key
+            ' get index of string prefix '
+            start =  key.rfind(prepattern)
+            start = start + len(prepattern)
+            ' get index of string postfix '
+            end = key.rfind(postpattern)
+            fileOutputName =  key[start:end]
+            print fileOutputName
+
     def printResult(self):
         print self.fileAndResult
 
 if __name__ == "__main__":
-    print "Starting parsing Measure files from path: " + startSearchPath
-    print "File Pattern: " + pattern
+    print "Starting parsing Measure files from path: \t %s" % startSearchPath
+    print "File Search Pattern: \t %s" %  pattern
     files = FileSearch(startSearchPath, pattern)
     v = files.getFileList()
     files.printList()
@@ -67,3 +79,4 @@ if __name__ == "__main__":
     r = storeResult(v)
     dic = r.getResult()
     r.printResult()
+    r.calcOutputName(filePrePattern, filePostPattern)
