@@ -1,7 +1,7 @@
 import os
 
 startSearchPath = "."
-storePath = "./result.txt"
+storePath = "./mesure.txt"
 
 print "Starting parsing Measure files from path: " + startSearchPath
 
