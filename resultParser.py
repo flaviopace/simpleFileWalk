@@ -24,6 +24,7 @@ class FileSearch(object):
                     fileIn = os.path.join(root, file)
                     print "Found file: " + fileIn
                     self.fileList.append(fileIn)
+
         if not self.fileList:
             raise Exception ("List is Empty")
         return self.fileList
@@ -52,25 +53,27 @@ class storeResult(object):
             in_file.close()
             # Store only the num
             self.fileAndResult[fileIn] = measureResult[1].rstrip()
+
         return self.fileAndResult
 
     def calcOutputName(self, prepattern, postpattern):
         ''' Starting from full file name, we have to understant the test case associated to result  '''
-        localList = []
         for key in self.fileAndResult.keys():
-            print key
+            localList = []
             ' get prefix index '
             start =  key.rfind(prepattern)
             start = start + len(prepattern)
             ' get postfix index of '
             end = key.rfind(postpattern)
+            ' compute Test name '
             fileOutputName =  key[start:end]
-            print fileOutputName
+            ' new value list will have the name and the result'
             localList.append(fileOutputName)
             localList.append(self.fileAndResult.get(key))
-            print localList
+
             self.fileAndResult[key] = localList
-            return self.fileAndResult
+
+        return self.fileAndResult
 
     def printResult(self):
         print self.fileAndResult
