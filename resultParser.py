@@ -55,16 +55,22 @@ class storeResult(object):
         return self.fileAndResult
 
     def calcOutputName(self, prepattern, postpattern):
-        '''   '''
+        ''' Starting from full file name, we have to understant the test case associated to result  '''
+        localList = []
         for key in self.fileAndResult.keys():
             print key
-            ' get index of string prefix '
+            ' get prefix index '
             start =  key.rfind(prepattern)
             start = start + len(prepattern)
-            ' get index of string postfix '
+            ' get postfix index of '
             end = key.rfind(postpattern)
             fileOutputName =  key[start:end]
             print fileOutputName
+            localList.append(fileOutputName)
+            localList.append(self.fileAndResult.get(key))
+            print localList
+            self.fileAndResult[key] = localList
+            return self.fileAndResult
 
     def printResult(self):
         print self.fileAndResult
@@ -79,4 +85,5 @@ if __name__ == "__main__":
     r = storeResult(v)
     dic = r.getResult()
     r.printResult()
-    r.calcOutputName(filePrePattern, filePostPattern)
+    dic = r.calcOutputName(filePrePattern, filePostPattern)
+    r.printResult()
