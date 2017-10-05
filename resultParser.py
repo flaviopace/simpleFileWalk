@@ -1,8 +1,11 @@
 import os
+import zipfile
+
 
 startSearchPath = "."
 storePath = "./mesure.txt"
 pattern = "MEAS.txt"
+filepattern = "html"
 filePrePattern = "PV_TRD_8226_51_"
 filePostPattern = "MEAS.txt"
 
@@ -32,6 +35,60 @@ class FileSearch(object):
     def printList(self):
         ''' print array file'''
         print self.fileList
+
+class DirSearch(object):
+
+    def __init__(self, dirpath, filextension):
+        ''' We have to define some variable for computation '''
+        self.startSearchPath = dirpath
+        self.pattern = filextension
+        self.DirList = []
+
+    def getDirList(self):
+        '''Get the list of Files that ends with defined pattern'''
+        for root, dirs, files in os.walk(self.startSearchPath):
+            # for each dir found
+            for currentFile in files:
+                #select dir that start with desired pattern
+                if currentFile.endswith(self.pattern):
+                    fullPath = os.path.realpath(root)
+                    print "Found Path {0} " . format(os.path.realpath(root))
+                    self.DirList.append(fullPath)
+                    #shutil.make_archive("aa", 'zip', os.path.realpath(root))
+
+        if not self.DirList:
+            raise Exception ("List is Empty")
+        return self.DirList
+
+
+    def printList(self):
+        ''' print array file'''
+        print self.DirList
+
+
+def zip(folder_path, output_path):
+    """Zip the contents of an entire folder (with that folder included
+    in the archive). Empty subfolders will be included in the archive
+    as well.
+    """
+    # Retrieve the paths of the folder contents.
+    zip_file = zipfile.ZipFile(os.path.join(output_path,"log.zip"), 'w', zipfile.ZIP_DEFLATED)
+    for root, folders, files in os.walk(folder_path):
+        # Include all subfolders, including empty ones.
+        for folder_name in folders:
+            absolute_path = os.path.join(root, folder_name)
+            relative_path = absolute_path.replace(folder_path + '\\','')
+            print "Adding '%s' to archive." % absolute_path
+            zip_file.write(absolute_path, relative_path)
+        for file_name in files:
+            absolute_path = os.path.join(root, file_name)
+            relative_path = absolute_path.replace(folder_path + '\\','')
+            print "Adding '%s' to archive." % absolute_path
+            zip_file.write(absolute_path, relative_path)
+        print "'%s' created successfully." % output_path
+
+
+    zip_file.close()
 
 
 class storeResult(object):
@@ -78,7 +135,7 @@ class storeResult(object):
     def printResult(self):
         print self.fileAndResult
 
-if __name__ == "__main__":
+if __name__ == "1__main__":
     print "Starting parsing Measure files from path: \t %s" % startSearchPath
     print "File Search Pattern: \t %s" %  pattern
     files = FileSearch(startSearchPath, pattern)
@@ -90,3 +147,12 @@ if __name__ == "__main__":
     r.printResult()
     dic = r.calcOutputName(filePrePattern, filePostPattern)
     r.printResult()
+
+if __name__ == "__main__":
+
+    ds = DirSearch(startSearchPath, filepattern)
+    listDir = ds.getDirList()
+
+    for buildir in listDir:
+        print("Zip Dir {0}") . format(buildir)
+        zip(buildir,buildir)
