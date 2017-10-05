@@ -86,6 +86,7 @@ def zip(folder_path, output_path):
                 relative_path = absolute_path.replace(folder_path + '\\','')
                 print "Adding '%s' to archive." % absolute_path
                 zip_file.write(absolute_path)
+                os.remove(absolute_path)
         print "'%s' created successfully." % absolute_path
 
 
