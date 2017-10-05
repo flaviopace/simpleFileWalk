@@ -79,13 +79,14 @@ def zip(folder_path, output_path):
             absolute_path = os.path.join(root, folder_name)
             relative_path = absolute_path.replace(folder_path + '\\','')
             print "Adding '%s' to archive." % absolute_path
-            zip_file.write(absolute_path, relative_path)
+            zip_file.write(absolute_path)
         for file_name in files:
-            absolute_path = os.path.join(root, file_name)
-            relative_path = absolute_path.replace(folder_path + '\\','')
-            print "Adding '%s' to archive." % absolute_path
-            zip_file.write(absolute_path, relative_path)
-        print "'%s' created successfully." % output_path
+            if not file_name.endswith(".zip"):
+                absolute_path = os.path.join(root, file_name)
+                relative_path = absolute_path.replace(folder_path + '\\','')
+                print "Adding '%s' to archive." % absolute_path
+                zip_file.write(absolute_path)
+        print "'%s' created successfully." % absolute_path
 
 
     zip_file.close()
